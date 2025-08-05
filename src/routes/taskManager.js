@@ -44,7 +44,7 @@ router.post("/tasks",[
     }
 });
 
-//2. Implement GET /tasks: Retrieve all tasks with filtering abd sorting .
+//2. Implement GET /tasks: Retrieve all tasks with filtering and sorting .
 router.get("/tasks", async (req,res) => {
   try {
     const { completed, sort, priority } = req.query;
@@ -58,14 +58,14 @@ router.get("/tasks", async (req,res) => {
 //3. Implement GET /tasks/:id: Retrieve a specific task by its ID.
 router.get("/tasks/:id", async (req,res) => {
   try {
-    const taskId = parseInt(req.params.id);
+    const taskId = Number(req.params.id);
     const task = await getTaskById(taskId);
     res.status(200).json(task);
   } catch (error) {
-    if (error === "Task not found") {
-      res.status(404).json({ error: 'Task not found' });
+    if (error instanceof Error && error.message === "Task not found") {
+        res.status(404).json({ error: "Task not found" });
     } else {
-      res.status(500).json({ error: 'Unable to fetch task due to server error' });
+        res.status(500).json({ error: "Unable to fetch task due to server error" });
     }
   }
 });
@@ -87,15 +87,15 @@ router.put("/tasks/:id", [
       .withMessage("Priority must be low, medium, or high"),
   ], validateRequest, async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = Number(req.params.id);
     const { title, description, completed, priority } = req.body;
     const updatedTask = await updateTaskById({ id, title, description, completed, priority });
     res.status(200).json(updatedTask);
   } catch (error) {
-    if (error === "Task not found") {
-      res.status(404).json({ error: 'Task not found' });
+    if (error instanceof Error && error.message === "Task not found") {
+        res.status(404).json({ error: "Task not found" });
     } else {
-      res.status(500).json({ error: 'Unable to update task due to server error' });
+        res.status(500).json({ error: "Unable to update task due to server error" });
     }
   }
 });
@@ -103,14 +103,14 @@ router.put("/tasks/:id", [
 //5. Implement DELETE /tasks/:id: Delete a task by its ID.
 router.delete("/tasks/:id",async (req,res)=>{
     try {
-        const taskId = parseInt(req.params.id);
+        const taskId = Number(req.params.id);
         await deleteTaskById(taskId);
         res.status(200).json({ success : true , data: 'Task deleted successfully' });
       } catch (error) {
-        if (error === "Task not found") {
-          res.status(404).json({ success: false, error: 'Task not found' });
+        if (error instanceof Error && error.message === "Task not found") {
+          res.status(404).json({ success: false, error: "Task not found" });
         } else {
-          res.status(500).json({ success: false, error: 'Unable to delete task due to server error' });
+          res.status(500).json({ success: false, error: "Unable to delete task due to server error" });
         }
       }
 });

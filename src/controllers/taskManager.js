@@ -1,10 +1,12 @@
 const taskData = require("../../task.json").tasks;
 
 //1. Implement POST /tasks: Create a new task with the required fields (title, description, completed).
- const createTask = async ({ title, description, completed, priority }) => {
+const createTask = async ({ title, description, completed, priority }) => {
   try {
+    // Find the max id in the current tasks and increment by 1
+    const maxId = taskData.length > 0 ? Math.max(...taskData.map(task => task.id)) : 0;
     const newTask = {
-      id: taskData.length + 1,
+      id: maxId + 1,
       title,
       description,
       completed,
@@ -14,7 +16,7 @@ const taskData = require("../../task.json").tasks;
     taskData.push(newTask);
     return newTask;
   } catch (error) {
-    return Promise.reject(error);
+    throw error;
   }
 };
 
@@ -45,7 +47,7 @@ const getAllTasks = async ({ completed, sort, priority } = {}) => {
 
     return filteredTasks;
   } catch (error) {
-    return Promise.reject(error);
+    throw error;
   }
 };
 
@@ -54,20 +56,20 @@ const getTaskById = async (id) => {
   try {
     const task = taskData.find((task) => task.id == id);
     if (!task) {
-      throw"Task not found";
+      throw new Error("Task not found");
     }
     return task;
   } catch (error) {
-    return Promise.reject(error);
+    throw error;
   }
 };
 
 //4. Implement PUT /tasks/:id: Update an existing task by its ID.
- const updateTaskById = async  ({ id, title, description, completed, priority }) => {
+const updateTaskById = async  ({ id, title, description, completed, priority }) => {
   try {
     const task = taskData.find((task) => task.id == id);
     if (!task) {
-      throw "Task not found";
+      throw new Error("Task not found");
     }
     task.title = title;
     task.description = description;
@@ -76,21 +78,21 @@ const getTaskById = async (id) => {
     
     return task;
   } catch (error) {
-    return Promise.reject(error);
+    throw error;
   }
 };
 
 //5. Implement DELETE /tasks/:id: Delete a task by its ID.
- const deleteTaskById = async (id) => {
+const deleteTaskById = async (id) => {
   try {
     const task = taskData.find((task) => task.id == id);
     if (!task) {
-      throw "Task not found";
+      throw new Error("Task not found");
     }
     taskData.splice(taskData.indexOf(task), 1);
     return task;
   } catch (error) {
-    return Promise.reject(error);
+    throw error;
   }
 };
 
